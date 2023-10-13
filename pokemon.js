@@ -1,13 +1,20 @@
-const cardContainer = document.querySelector(".content-card");
 const zoneAffichagePokemon = document.querySelector(".image");
+const zoneAffichageType = document.querySelector(".imgType");
 const card = document.querySelectorAll(".card");
 const zoneNomPokemon = document.querySelector(".pokemonName");
-console.log(zoneNomPokemon);
 const zonePvPokemon = document.querySelector(".PV");
 const zoneTalents = document.querySelector(".talents");
+const imgTalent1 = document.querySelector(".imgTalent1");
+const imgTalent2 = document.querySelector(".imgTalent2");
+const zoneTalent1 = document.querySelector(".talent1");
+const zoneTalent2 = document.querySelector(".talent2");
+const zoneDegat1 = document.querySelector(".degats1");
+const zoneDegat2 = document.querySelector(".degats2");
 const boutton = document.querySelector(".btnGeneration");
 const url = "https://api-pokemon-fr.vercel.app/api/v1/gen/1";
+
 let listePokemonGen1 = [];
+let listeType = [];
 function NombreRandom(max) {
   return Math.floor(Math.random() * max);
 }
@@ -28,30 +35,72 @@ fetch(url)
   });
 
 boutton.addEventListener("click", () => {
+  listeType = [];
   let nbreRandom = NombreRandom(listePokemonGen1.length);
-  pokemonAleatoire(nbreRandom);
+  nettoyageAncienneCarte();
+  infosPokemon(nbreRandom);
 });
 
-function pokemonAleatoire(nbreRandom) {
-  if (zoneAffichagePokemon.childElementCount > 0) {
-    zoneAffichagePokemon.innerHTML = "";
-    zoneNomPokemon.innerHTML = "";
-    zonePvPokemon.innerHTML = "";
-  }
+function nettoyageAncienneCarte() {
+  zoneAffichagePokemon.innerHTML = "";
+  zoneNomPokemon.innerHTML = "";
+  zonePvPokemon.innerHTML = "";
+  zoneAffichageType.innerHTML = "";
+  imgTalent1.innerHTML = "";
+  imgTalent2.innerHTML = "";
+  // if (imgTalent1.childElementCount > 0) {
+  //   imgTalent1.removeChild("img");
+  // }
+}
+
+function infosPokemon(nbreRandom) {
   const nomPokemon = listePokemonGen1[nbreRandom].name.fr;
-  console.log(nomPokemon);
-  zoneNomPokemon.innerHTML = nomPokemon;
+  const idPokemon = listePokemonGen1[nbreRandom].pokedexId;
+  console.log(idPokemon, nomPokemon);
+  listeType.push(listePokemonGen1[nbreRandom].types[0].image);
+  const imgType = document.createElement("img");
+  const img2 = document.createElement("img");
+  const img3 = document.createElement("img");
+  imgType.setAttribute("src", listeType[0]);
+  if (listePokemonGen1[nbreRandom].types.length > 1) {
+    listeType.push(listePokemonGen1[nbreRandom].types[1].image);
+    img3.setAttribute("src", listeType[1]);
+  } else {
+    img3.setAttribute("src", listeType[0]);
+  }
+  img2.setAttribute("src", listeType[0]);
+  console.log(listeType);
   const pvPokemon = listePokemonGen1[nbreRandom].stats.hp;
-  console.log(pvPokemon);
-  zonePvPokemon.innerHTML = `PV:${pvPokemon}`;
   const imagePokemon = listePokemonGen1[nbreRandom].sprites.regular;
-  const img = document.createElement("img");
-  img.setAttribute("src", imagePokemon);
-  zoneAffichagePokemon.appendChild(img);
-  const talents = listePokemonGen1[nbreRandom].talents;
-  const nbrDegat = listePokemonGen1[nbreRandom].stats;
-  console.log(talents, nbrDegat);
-  zoneTalents.innerHTML = `<span>${talents[0].name}:</span>  ${nbrDegat.atk} <br><span>${talents[1].name}:</span>  ${nbrDegat.def}`;
+  const img1 = document.createElement("img");
+  img1.setAttribute("src", imagePokemon);
+  console.log(img1);
+
+  const talent1 = listePokemonGen1[nbreRandom].talents[0].name;
+  const nbrDegats1 = listePokemonGen1[nbreRandom].stats.atk;
+  console.log(talent1, nbrDegats1);
+
+  zoneTalent2.innerHTML = "";
+  zoneDegat2.innerHTML = "";
+
+  if (listePokemonGen1[nbreRandom].talents.length > 1) {
+    const talent2 = listePokemonGen1[nbreRandom].talents[1].name;
+    const nbrDegats2 = listePokemonGen1[nbreRandom].stats.spe_atk;
+    zoneTalent2.innerHTML = talent2;
+    zoneDegat2.innerHTML = `${nbrDegats2} dégâts`;
+    console.log(talent2, nbrDegats2);
+  }
+
+  // MAJ AFFICHAGE
+  zoneNomPokemon.innerHTML = `#${idPokemon} ${nomPokemon}`;
+  zoneAffichageType.appendChild(imgType);
+  zonePvPokemon.innerHTML = `PV:${pvPokemon}`;
+  zoneAffichagePokemon.appendChild(img1);
+  console.log(listeType);
+  imgTalent1.appendChild(img2);
+  imgTalent2.appendChild(img3);
+  zoneTalent1.innerHTML = talent1;
+  zoneDegat1.innerHTML = `${nbrDegats1} dégâts`;
 }
 
 card.forEach((el) => {
@@ -66,7 +115,6 @@ card.forEach((el) => {
 
     let angleY = -(x - midCardWidth) / 12;
     let angleX = (y - midCardHeight) / 12;
-    console.log(x, y);
 
     el.children[0].style.transform = `rotateX(${angleX}deg) rotateY(${angleY}deg) scale(1.1)`;
   });
