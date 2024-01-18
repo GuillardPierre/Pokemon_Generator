@@ -11,7 +11,7 @@ const zoneTalent2 = document.querySelector(".talent2");
 const zoneDegat1 = document.querySelector(".degats1");
 const zoneDegat2 = document.querySelector(".degats2");
 const boutton = document.querySelector(".btnGeneration");
-const url = "https://api-pokemon-fr.vercel.app/api/v1/gen/1";
+const url = "https://tyradex.vercel.app/api/v1/gen/1";
 
 let listePokemonGen1 = [];
 let listeType = [];
@@ -29,17 +29,22 @@ fetch(url)
   .then((data) => {
     listePokemonGen1 = data;
     console.log(listePokemonGen1);
+    majAffichage();
   })
   .catch((error) => {
     console.error("Erreur :", error);
   });
 
 boutton.addEventListener("click", () => {
+  majAffichage();
+});
+
+function majAffichage() {
   listeType = [];
   let nbreRandom = NombreRandom(listePokemonGen1.length);
   nettoyageAncienneCarte();
   infosPokemon(nbreRandom);
-});
+}
 
 function nettoyageAncienneCarte() {
   zoneAffichagePokemon.innerHTML = "";
